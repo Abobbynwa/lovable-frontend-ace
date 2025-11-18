@@ -3,7 +3,7 @@ import { FileText, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { getStudents, updateResults } from '@/lib/api';
+import { getStudents, updateResults } from '@/lib/supabase-api';
 import ErrorAlert from '@/components/ErrorAlert';
 import { TableSkeleton } from '@/components/LoadingSkeleton';
 import { toast } from 'sonner';
@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 interface Student {
   id: string;
   name: string;
-  rollNumber: string;
+  roll_number: string;
 }
 
 const subjects = ['Mathematics', 'Science', 'English', 'History', 'Geography'];
@@ -42,7 +42,7 @@ const Results = () => {
       });
       setScores(initialScores);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load students');
+      setError(err.message || 'Failed to load students');
     } finally {
       setLoading(false);
     }
@@ -77,7 +77,7 @@ const Results = () => {
       await updateResults({ results: resultsData });
       toast.success('Results updated successfully!');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update results');
+      setError(err.message || 'Failed to update results');
       toast.error('Failed to update results');
     } finally {
       setSubmitting(false);
@@ -129,7 +129,7 @@ const Results = () => {
                           gridTemplateColumns: `150px 200px repeat(${subjects.length}, 1fr)`
                         }}
                       >
-                        <div className="font-medium">{student.rollNumber}</div>
+                        <div className="font-medium">{student.roll_number}</div>
                         <div>{student.name}</div>
                         {subjects.map((subject) => (
                           <div key={subject}>

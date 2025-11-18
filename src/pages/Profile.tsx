@@ -4,14 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { getTeacherProfile, updateTeacherProfile } from '@/lib/api';
+import { getTeacherProfile, updateTeacherProfile } from '@/lib/supabase-api';
 import { useAuth } from '@/contexts/AuthContext';
 import ErrorAlert from '@/components/ErrorAlert';
 import { ProfileSkeleton } from '@/components/LoadingSkeleton';
 import { toast } from 'sonner';
 
 const Profile = () => {
-  const { teacher, setTeacher } = useAuth();
+  const { teacher } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(true);
@@ -28,7 +28,7 @@ const Profile = () => {
       setName(data.name);
       setEmail(data.email);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load profile');
+      setError(err.message || 'Failed to load profile');
     } finally {
       setLoading(false);
     }
@@ -40,11 +40,10 @@ const Profile = () => {
     setError('');
 
     try {
-      const updatedProfile = await updateTeacherProfile({ name });
-      setTeacher(updatedProfile);
+      await updateTeacherProfile({ name });
       toast.success('Profile updated successfully!');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update profile');
+      setError(err.message || 'Failed to update profile');
       toast.error('Failed to update profile');
     } finally {
       setSubmitting(false);

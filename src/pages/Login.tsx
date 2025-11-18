@@ -1,24 +1,24 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Mail } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { sendVerificationCode } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import ErrorAlert from '@/components/ErrorAlert';
 import { toast } from 'sonner';
 
-const SendCode = () => {
+const Login = () => {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { setEmail: setAuthEmail, isVerified } = useAuth();
+  const { signIn, user } = useAuth();
 
-  // Redirect if already verified
-  if (isVerified) {
+  // Redirect if already logged in
+  if (user) {
     navigate('/dashboard');
     return null;
   }
@@ -32,8 +32,8 @@ const SendCode = () => {
     e.preventDefault();
     setError('');
 
-    if (!email) {
-      setError('Please enter your email address');
+    if (!email || !password) {
+      setError('Please enter both email and password');
       return;
     }
 
@@ -45,12 +45,16 @@ const SendCode = () => {
     setLoading(true);
 
     try {
-      await sendVerificationCode(email);
-      setAuthEmail(email);
-      toast.success('Verification code sent to your email!');
-      navigate('/verify-code');
+      const { error } = await signIn(email, password);
+      
+      if (error) {
+        setError(error.message);
+      } else {
+        toast.success('Logged in successfully!');
+        navigate('/dashboard');
+      }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to send verification code. Please try again.');
+      setError(err.message || 'Failed to log in. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -62,12 +66,12 @@ const SendCode = () => {
         <CardHeader className="space-y-1">
           <div className="flex justify-center mb-4">
             <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-              <Mail className="h-6 w-6 text-primary" />
+              <LogIn className="h-6 w-6 text-primary" />
             </div>
           </div>
           <CardTitle className="text-2xl text-center">Welcome to EduPortal</CardTitle>
           <CardDescription className="text-center">
-            Enter your email to receive a verification code
+            Sign in to your teacher account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -86,9 +90,28 @@ const SendCode = () => {
               />
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
+              />
+            </div>
+
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Sending...' : 'Send Verification Code'}
+              {loading ? 'Signing in...' : 'Sign In'}
             </Button>
+
+            <div className="text-center text-sm text-muted-foreground">
+              Don't have an account?{' '}
+              <Link to="/signup" className="text-primary hover:underline">
+                Sign up
+              </Link>
+            </div>
           </form>
         </CardContent>
       </Card>
@@ -96,4 +119,4 @@ const SendCode = () => {
   );
 };
 
-export default SendCode;
+export default Login;
