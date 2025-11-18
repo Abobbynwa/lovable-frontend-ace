@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Users, Calendar, TrendingUp, BookOpen } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getStats } from '@/lib/api';
+import { getStats } from '@/lib/supabase-api';
 import { useAuth } from '@/contexts/AuthContext';
 import ErrorAlert from '@/components/ErrorAlert';
 import { CardSkeleton } from '@/components/LoadingSkeleton';
@@ -28,7 +28,7 @@ const Dashboard = () => {
       const data = await getStats();
       setStats(data);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load dashboard data');
+      setError(err.message || 'Failed to load dashboard data');
     } finally {
       setLoading(false);
     }
