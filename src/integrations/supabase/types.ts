@@ -89,23 +89,32 @@ export type Database = {
         Row: {
           created_at: string
           email: string
+          email_verified: boolean | null
           id: string
           name: string
           updated_at: string
+          verification_token: string | null
+          verification_token_expires_at: string | null
         }
         Insert: {
           created_at?: string
           email: string
+          email_verified?: boolean | null
           id: string
           name: string
           updated_at?: string
+          verification_token?: string | null
+          verification_token_expires_at?: string | null
         }
         Update: {
           created_at?: string
           email?: string
+          email_verified?: boolean | null
           id?: string
           name?: string
           updated_at?: string
+          verification_token?: string | null
+          verification_token_expires_at?: string | null
         }
         Relationships: []
       }
@@ -153,6 +162,38 @@ export type Database = {
             columns: ["teacher_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_guardians: {
+        Row: {
+          created_at: string | null
+          guardian_id: string
+          id: string
+          relationship: string
+          student_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          guardian_id: string
+          id?: string
+          relationship: string
+          student_id: string
+        }
+        Update: {
+          created_at?: string | null
+          guardian_id?: string
+          id?: string
+          relationship?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_guardians_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
             referencedColumns: ["id"]
           },
         ]
@@ -240,15 +281,43 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       calculate_grade: { Args: { score: number }; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "teacher" | "parent" | "student"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -375,6 +444,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "teacher", "parent", "student"],
+    },
   },
 } as const

@@ -6,13 +6,18 @@ interface Teacher {
   id: string;
   name: string;
   email: string;
+  email_verified: boolean;
 }
+
+type UserRole = 'admin' | 'teacher' | 'parent' | 'student';
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   teacher: Teacher | null;
+  userRoles: UserRole[];
   loading: boolean;
+  hasRole: (role: UserRole) => boolean;
   signUp: (email: string, password: string, name: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   logout: () => Promise<void>;
@@ -24,7 +29,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [teacher, setTeacher] = useState<Teacher | null>(null);
+  const [userRoles, setUserRoles] = useState<UserRole[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const hasRole = (role: UserRole): boolean => {
+    return userRoles.includes(role);
+  };
 
   useEffect(() => {
     // Set up auth state listener
@@ -34,22 +44,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Fetch teacher profile
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
+          // Fetch teacher profile and roles
+          const [profileResult, rolesResult] = await Promise.all([
+            supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', session.user.id)
+              .single(),
+            supabase
+              .from('user_roles')
+              .select('role')
+              .eq('user_id', session.user.id)
+          ]);
           
-          if (profile) {
+          if (profileResult.data) {
             setTeacher({
-              id: profile.id,
-              name: profile.name,
-              email: profile.email,
+              id: profileResult.data.id,
+              name: profileResult.data.name,
+              email: profileResult.data.email,
+              email_verified: profileResult.data.email_verified || false,
             });
+          }
+
+          if (rolesResult.data) {
+            setUserRoles(rolesResult.data.map(r => r.role as UserRole));
           }
         } else {
           setTeacher(null);
+          setUserRoles([]);
         }
       }
     );
@@ -60,21 +82,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
-          .then(({ data: profile }) => {
-            if (profile) {
-              setTeacher({
-                id: profile.id,
-                name: profile.name,
-                email: profile.email,
-              });
-            }
-            setLoading(false);
-          });
+        Promise.all([
+          supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single(),
+          supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', session.user.id)
+        ]).then(([profileResult, rolesResult]) => {
+          if (profileResult.data) {
+            setTeacher({
+              id: profileResult.data.id,
+              name: profileResult.data.name,
+              email: profileResult.data.email,
+              email_verified: profileResult.data.email_verified || false,
+            });
+          }
+
+          if (rolesResult.data) {
+            setUserRoles(rolesResult.data.map(r => r.role as UserRole));
+          }
+
+          setLoading(false);
+        });
       } else {
         setLoading(false);
       }
@@ -110,6 +143,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
     setSession(null);
     setTeacher(null);
+    setUserRoles([]);
   };
 
   return (
@@ -118,7 +152,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         user,
         session,
         teacher,
+        userRoles,
         loading,
+        hasRole,
         signUp,
         signIn,
         logout,

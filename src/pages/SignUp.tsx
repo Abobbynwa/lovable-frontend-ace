@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useAuth } from '@/contexts/AuthContext';
 import ErrorAlert from '@/components/ErrorAlert';
 import { toast } from 'sonner';
+import { validateEmail, validatePassword, sanitizeString } from '@/lib/input-validation';
 
 const SignUp = () => {
   const [name, setName] = useState('');
@@ -24,34 +25,32 @@ const SignUp = () => {
     return null;
   }
 
-  const validateEmail = (email: string) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (!name || !email || !password) {
-      setError('Please fill in all fields');
+    // Validate and sanitize inputs
+    const sanitizedName = sanitizeString(name);
+    if (!sanitizedName) {
+      setError('Name is required');
       return;
     }
 
-    if (!validateEmail(email)) {
+    if (!email || !validateEmail(email)) {
       setError('Please enter a valid email address');
       return;
     }
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.valid) {
+      setError(passwordValidation.error || 'Invalid password');
       return;
     }
 
     setLoading(true);
 
     try {
-      const { error } = await signUp(email, password, name);
+      const { error } = await signUp(email, password, sanitizedName);
       
       if (error) {
         if (error.message.includes('already registered')) {

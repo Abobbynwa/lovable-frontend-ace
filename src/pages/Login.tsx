@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useAuth } from '@/contexts/AuthContext';
 import ErrorAlert from '@/components/ErrorAlert';
 import { toast } from 'sonner';
+import { validateEmail } from '@/lib/input-validation';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -22,11 +23,6 @@ const Login = () => {
     navigate('/dashboard');
     return null;
   }
-
-  const validateEmail = (email: string) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
