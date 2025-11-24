@@ -106,7 +106,7 @@ serve(async (req) => {
           })
         }).catch(console.error);
 
-      } catch (error) {
+      } catch (error: any) {
         errors.push({ email: student.email, error: error.message });
       }
     }
@@ -132,7 +132,7 @@ serve(async (req) => {
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error bulk importing students:', error);
     return new Response(
       JSON.stringify({ error: error.message }),

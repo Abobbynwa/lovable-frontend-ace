@@ -64,7 +64,7 @@ serve(async (req) => {
       JSON.stringify({ success: true, message: 'Email verified successfully' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error verifying email:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
