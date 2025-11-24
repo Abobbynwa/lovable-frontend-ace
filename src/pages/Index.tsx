@@ -17,7 +17,9 @@ const Index = () => {
         navigate('/parent');
       } else if (userRoles.includes('student')) {
         navigate('/student');
-      } else if (userRoles.includes('teacher')) {
+      } else if (userRoles.includes('staff') || userRoles.includes('teacher')) {
+        navigate('/dashboard');
+      } else {
         navigate('/dashboard');
       }
     }
@@ -43,11 +45,14 @@ const Index = () => {
             <h1 className="text-2xl font-bold">SchoolMS</h1>
           </div>
           <div className="flex gap-2">
-            <Button variant="ghost" onClick={() => navigate('/login')}>
-              Login
+            <Button variant="ghost" size="sm" onClick={() => navigate('/admin-login')}>
+              Admin
             </Button>
-            <Button onClick={() => navigate('/signup')}>
-              Sign Up
+            <Button variant="ghost" size="sm" onClick={() => navigate('/staff-login')}>
+              Staff
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => navigate('/student-login')}>
+              Student
             </Button>
           </div>
         </div>
@@ -63,12 +68,15 @@ const Index = () => {
           <p className="text-xl text-muted-foreground">
             A comprehensive platform for managing students, attendance, results, and communication between teachers, parents, and students.
           </p>
-          <div className="flex gap-4 justify-center pt-4">
-            <Button size="lg" onClick={() => navigate('/signup')}>
-              Get Started
+          <div className="flex flex-wrap gap-3 justify-center pt-4">
+            <Button size="lg" onClick={() => navigate('/admin-login')}>
+              Admin Login
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate('/login')}>
-              Login
+            <Button size="lg" variant="outline" onClick={() => navigate('/staff-login')}>
+              Staff Login
+            </Button>
+            <Button size="lg" variant="secondary" onClick={() => navigate('/student-login')}>
+              Student Login
             </Button>
           </div>
         </div>

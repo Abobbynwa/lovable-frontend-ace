@@ -8,6 +8,9 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
+import AdminLogin from "./pages/AdminLogin";
+import StaffLogin from "./pages/StaffLogin";
+import StudentLogin from "./pages/StudentLogin";
 import Dashboard from "./pages/Dashboard";
 import Students from "./pages/Students";
 import StudentProfile from "./pages/StudentProfile";
@@ -34,6 +37,9 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/staff-login" element={<StaffLogin />} />
+            <Route path="/student-login" element={<StudentLogin />} />
             <Route path="/verify" element={<VerifyEmail />} />
             <Route path="/" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
               <Route path="dashboard" element={<Dashboard />} />
