@@ -1,23 +1,83 @@
-CREATE TABLE users (
+-- ADMINS TABLE
+CREATE TABLE IF NOT EXISTS admins (
   id SERIAL PRIMARY KEY,
-  full_name VARCHAR(255),
-  email VARCHAR(255) UNIQUE NOT NULL,
+  username VARCHAR(255) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
-  role VARCHAR(20) NOT NULL,
-  class VARCHAR(50),
   created_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE students (
+-- STAFF TABLE
+CREATE TABLE IF NOT EXISTS staff (
   id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES users(id),
-  reg_no VARCHAR(50),
-  class VARCHAR(50),
-  guardian_name VARCHAR(255)
+  first_name VARCHAR(255),
+  last_name VARCHAR(255),
+  email VARCHAR(255) UNIQUE,
+  phone VARCHAR(255),
+  role VARCHAR(255),
+  created_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE staff (
+-- STUDENTS TABLE
+CREATE TABLE IF NOT EXISTS students (
   id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES users(id),
-  position VARCHAR(255)
+  first_name VARCHAR(255),
+  last_name VARCHAR(255),
+  class_id INTEGER,
+  gender VARCHAR(20),
+  dob DATE,
+  guardian_name VARCHAR(255),
+  guardian_phone VARCHAR(255),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- CLASSES TABLE
+CREATE TABLE IF NOT EXISTS classes (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) UNIQUE,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- SUBJECTS TABLE
+CREATE TABLE IF NOT EXISTS subjects (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255),
+  class_id INTEGER,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- ATTENDANCE TABLE
+CREATE TABLE IF NOT EXISTS attendance (
+  id SERIAL PRIMARY KEY,
+  student_id INTEGER,
+  date DATE NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- TIMETABLE
+CREATE TABLE IF NOT EXISTS timetable (
+  id SERIAL PRIMARY KEY,
+  class_id INTEGER,
+  subject_id INTEGER,
+  day VARCHAR(20),
+  time VARCHAR(20),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- RESULTS
+CREATE TABLE IF NOT EXISTS results (
+  id SERIAL PRIMARY KEY,
+  student_id INTEGER,
+  subject_id INTEGER,
+  term VARCHAR(20),
+  score INTEGER,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- REPORTS (log history)
+CREATE TABLE IF NOT EXISTS reports (
+  id SERIAL PRIMARY KEY,
+  type VARCHAR(255),
+  description TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
 );
