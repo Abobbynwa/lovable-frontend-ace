@@ -349,6 +349,63 @@ export type Database = {
           },
         ]
       }
+      staff: {
+        Row: {
+          account_number: string | null
+          age: number | null
+          bank_name: string | null
+          class_taught: string | null
+          created_at: string | null
+          email: string
+          gender: string | null
+          hobbies: string | null
+          id: string
+          name: string
+          rank: string | null
+          resident_address: string | null
+          staff_type: string | null
+          state_of_origin: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          account_number?: string | null
+          age?: number | null
+          bank_name?: string | null
+          class_taught?: string | null
+          created_at?: string | null
+          email: string
+          gender?: string | null
+          hobbies?: string | null
+          id: string
+          name: string
+          rank?: string | null
+          resident_address?: string | null
+          staff_type?: string | null
+          state_of_origin?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          account_number?: string | null
+          age?: number | null
+          bank_name?: string | null
+          class_taught?: string | null
+          created_at?: string | null
+          email?: string
+          gender?: string | null
+          hobbies?: string | null
+          id?: string
+          name?: string
+          rank?: string | null
+          resident_address?: string | null
+          staff_type?: string | null
+          state_of_origin?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       student_guardians: {
         Row: {
           created_at: string | null
@@ -383,42 +440,72 @@ export type Database = {
       }
       students: {
         Row: {
+          age: number | null
+          blood_group: string | null
+          blood_type: string | null
           class_id: string | null
+          class_teacher_name: string | null
           created_at: string
           email: string | null
+          genotype: string | null
           guardian_id: string | null
           guardian_name: string | null
           guardian_phone: string | null
           id: string
           name: string
+          parent_email: string | null
+          parent_name: string | null
+          parent_phone: string | null
           roll_number: string
+          state_of_origin: string | null
           teacher_id: string
+          town: string | null
           updated_at: string
         }
         Insert: {
+          age?: number | null
+          blood_group?: string | null
+          blood_type?: string | null
           class_id?: string | null
+          class_teacher_name?: string | null
           created_at?: string
           email?: string | null
+          genotype?: string | null
           guardian_id?: string | null
           guardian_name?: string | null
           guardian_phone?: string | null
           id?: string
           name: string
+          parent_email?: string | null
+          parent_name?: string | null
+          parent_phone?: string | null
           roll_number: string
+          state_of_origin?: string | null
           teacher_id: string
+          town?: string | null
           updated_at?: string
         }
         Update: {
+          age?: number | null
+          blood_group?: string | null
+          blood_type?: string | null
           class_id?: string | null
+          class_teacher_name?: string | null
           created_at?: string
           email?: string | null
+          genotype?: string | null
           guardian_id?: string | null
           guardian_name?: string | null
           guardian_phone?: string | null
           id?: string
           name?: string
+          parent_email?: string | null
+          parent_name?: string | null
+          parent_phone?: string | null
           roll_number?: string
+          state_of_origin?: string | null
           teacher_id?: string
+          town?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -534,7 +621,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "teacher" | "parent" | "student"
+      app_role: "admin" | "teacher" | "parent" | "student" | "staff"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -662,7 +749,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "teacher", "parent", "student"],
+      app_role: ["admin", "teacher", "parent", "student", "staff"],
     },
   },
 } as const

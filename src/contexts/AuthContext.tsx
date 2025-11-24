@@ -9,7 +9,7 @@ interface Teacher {
   email_verified: boolean;
 }
 
-type UserRole = 'admin' | 'teacher' | 'parent' | 'student';
+type UserRole = 'admin' | 'teacher' | 'parent' | 'student' | 'staff';
 
 interface AuthContextType {
   user: User | null;

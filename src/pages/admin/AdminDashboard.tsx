@@ -8,6 +8,7 @@ import { Navigate } from 'react-router-dom';
 import StudentsManagement from './StudentsManagement';
 import ClassesManagement from './ClassesManagement';
 import AnnouncementsManagement from './AnnouncementsManagement';
+import StaffManagement from './StaffManagement';
 
 export default function AdminDashboard() {
   const { hasRole, loading } = useAuth();
@@ -63,6 +64,7 @@ export default function AdminDashboard() {
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="students">Students</TabsTrigger>
+          <TabsTrigger value="staff">Staff</TabsTrigger>
           <TabsTrigger value="classes">Classes</TabsTrigger>
           <TabsTrigger value="announcements">Announcements</TabsTrigger>
         </TabsList>
@@ -114,6 +116,10 @@ export default function AdminDashboard() {
 
         <TabsContent value="students">
           <StudentsManagement />
+        </TabsContent>
+
+        <TabsContent value="staff">
+          <StaffManagement />
         </TabsContent>
 
         <TabsContent value="classes">
