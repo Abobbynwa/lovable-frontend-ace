@@ -1,8 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
-import { Resend } from "npm:resend@2.0.0";
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -80,21 +79,31 @@ serve(async (req) => {
       if (profiles && profiles.length > 0) {
         for (const profile of profiles) {
           try {
-            await resend.emails.send({
-              from: Deno.env.get("RESEND_FROM_EMAIL") || "onboarding@resend.dev",
-              to: [profile.email],
-              subject: title,
-              html: `
-                <div style="font-family: Arial, sans-serif; padding: 20px;">
-                  <h2>${title}</h2>
-                  <p>${message}</p>
-                  <p style="color: #666; font-size: 12px; margin-top: 20px;">
-                    This is an automated notification from School Management Portal.
-                  </p>
-                </div>
-              `,
-              text: `${title}\n\n${message}`
+            const emailResponse = await fetch('https://api.resend.com/emails', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${RESEND_API_KEY}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                from: Deno.env.get("RESEND_FROM_EMAIL") || "onboarding@resend.dev",
+                to: [profile.email],
+                subject: title,
+                html: `
+                  <div style="font-family: Arial, sans-serif; padding: 20px;">
+                    <h2>${title}</h2>
+                    <p>${message}</p>
+                    <p style="color: #666; font-size: 12px; margin-top: 20px;">
+                      This is an automated notification from School Management Portal.
+                    </p>
+                  </div>
+                `
+              })
             });
+            
+            if (!emailResponse.ok) {
+              throw new Error(`Email API error: ${await emailResponse.text()}`);
+            }
           } catch (emailError) {
             console.error(`Failed to send email to ${profile.email}:`, emailError);
           }
@@ -118,7 +127,7 @@ serve(async (req) => {
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error sending notification:', error);
     return new Response(
       JSON.stringify({ error: error.message }),

@@ -125,7 +125,7 @@ serve(async (req) => {
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error registering parent:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
