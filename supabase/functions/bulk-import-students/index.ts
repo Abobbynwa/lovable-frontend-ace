@@ -6,6 +6,60 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Validation functions
+function validateEmail(email: string): void {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    throw new Error('Invalid email format');
+  }
+  if (email.length > 255) {
+    throw new Error('Email must be less than 255 characters');
+  }
+}
+
+function validatePassword(password: string): void {
+  if (password.length < 8) {
+    throw new Error('Password must be at least 8 characters');
+  }
+  if (!/[A-Z]/.test(password)) {
+    throw new Error('Password must contain uppercase letter');
+  }
+  if (!/[a-z]/.test(password)) {
+    throw new Error('Password must contain lowercase letter');
+  }
+  if (!/[0-9]/.test(password)) {
+    throw new Error('Password must contain number');
+  }
+}
+
+function validateName(name: string): void {
+  if (name.length < 2 || name.length > 100) {
+    throw new Error('Name must be 2-100 characters');
+  }
+  if (/[<>]/.test(name)) {
+    throw new Error('Name contains invalid characters');
+  }
+}
+
+function validateRollNumber(rollNumber: string): void {
+  if (rollNumber.length === 0 || rollNumber.length > 50) {
+    throw new Error('Roll number must be 1-50 characters');
+  }
+  if (!/^[A-Z0-9-]+$/i.test(rollNumber)) {
+    throw new Error('Roll number must be alphanumeric with hyphens');
+  }
+}
+
+function validateStudent(student: any): void {
+  if (!student.email || !student.password || !student.name || !student.rollNumber) {
+    throw new Error('Missing required fields');
+  }
+  validateEmail(student.email);
+  validatePassword(student.password);
+  validateName(student.name);
+  validateRollNumber(student.rollNumber);
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -41,8 +95,16 @@ serve(async (req) => {
 
     const { students } = await req.json();
 
-    if (!students || !Array.isArray(students) || students.length === 0) {
-      throw new Error('Students array is required');
+    if (!students || !Array.isArray(students)) {
+      throw new Error('Students must be an array');
+    }
+
+    if (students.length === 0) {
+      throw new Error('Students array cannot be empty');
+    }
+
+    if (students.length > 100) {
+      throw new Error('Maximum 100 students per batch');
     }
 
     const results = [];
@@ -50,12 +112,10 @@ serve(async (req) => {
 
     for (const student of students) {
       try {
-        const { email, password, name, rollNumber, classId } = student;
+        // Validate each student
+        validateStudent(student);
 
-        if (!email || !password || !name || !rollNumber) {
-          errors.push({ email, error: 'Missing required fields' });
-          continue;
-        }
+        const { email, password, name, rollNumber, classId } = student;
 
         // Create auth user
         const { data: authData, error: authError } = await supabase.auth.admin.createUser({
