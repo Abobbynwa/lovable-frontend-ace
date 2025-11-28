@@ -6,6 +6,56 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Validation functions
+function validateEmail(email: string): void {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    throw new Error('Invalid email format');
+  }
+  if (email.length > 255) {
+    throw new Error('Email must be less than 255 characters');
+  }
+}
+
+function validatePassword(password: string): void {
+  if (password.length < 8) {
+    throw new Error('Password must be at least 8 characters long');
+  }
+  if (!/[A-Z]/.test(password)) {
+    throw new Error('Password must contain at least one uppercase letter');
+  }
+  if (!/[a-z]/.test(password)) {
+    throw new Error('Password must contain at least one lowercase letter');
+  }
+  if (!/[0-9]/.test(password)) {
+    throw new Error('Password must contain at least one number');
+  }
+}
+
+function validateName(name: string): void {
+  if (name.length < 2) {
+    throw new Error('Name must be at least 2 characters long');
+  }
+  if (name.length > 100) {
+    throw new Error('Name must be less than 100 characters');
+  }
+  if (/[<>]/.test(name)) {
+    throw new Error('Name contains invalid characters');
+  }
+}
+
+function validatePhone(phone: string | null): void {
+  if (!phone) return; // Phone is optional
+  
+  // Remove spaces, dashes, and parentheses for validation
+  const cleanPhone = phone.replace(/[\s\-()]/g, '');
+  
+  // Check if it starts with + or is all digits
+  if (!/^\+?[0-9]{10,15}$/.test(cleanPhone)) {
+    throw new Error('Invalid phone number format. Must be 10-15 digits, optionally starting with +');
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -25,8 +75,19 @@ serve(async (req) => {
       redirectUrl 
     } = await req.json();
 
+    // Enhanced validation
     if (!email || !password || !name) {
       throw new Error('Email, password, and name are required');
+    }
+
+    validateEmail(email);
+    validatePassword(password);
+    validateName(name);
+    validatePhone(phone);
+
+    // Validate studentIds if provided
+    if (studentIds && !Array.isArray(studentIds)) {
+      throw new Error('studentIds must be an array');
     }
 
     // Create auth user
