@@ -1,7 +1,6 @@
-// src/layouts/StaffLayout.tsx
 import React from "react";
-import { Navbar } from "../shared/Navbar";
-import { Sidebar } from "../shared/Sidebar";
+import { Navbar } from "@/shared/Navbar";
+import { Sidebar } from "@/shared/Sidebar";
 
 export const StaffLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
