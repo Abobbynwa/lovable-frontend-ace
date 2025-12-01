@@ -1,20 +1,38 @@
-import express from "express";
+import pkg from "pg";
 import cors from "cors";
+import express from "express";
 import dotenv from "dotenv";
-import { pool } from "./src/config/db.js"; // DB Connect
-import appRouter from "./src/app.js";
+import { pool } from "./src/config/db.js";
+import authRoutes from "./src/routes/authRoutes.js";
+import studentRoutes from "./src/routes/studentRoutes.js";
+import teacherRoutes from "./src/routes/teacherRoutes.js";
+import classRoutes from "./src/routes/classRoutes.js";
+import attendanceRoutes from "./src/routes/attendanceRoutes.js";
 
-dotenv.config();
+app.use(cors({
+  origin: [
+    "https://lovable-ace.vercel.app/"
+  ],
+  credentials: true
+}));
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+const { Pool } = pkg;
 
-// Main API router
-app.use("/api", appRouter);
+export const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  },
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 5000,
+  max: 10,
+  keepAlive: true
+});
 
-const PORT = process.env.PORT || 3000;
+pool.on("connect", () => {
+  console.log("✅ PostgreSQL Connected");
+});
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+pool.on("error", (err) => {
+  console.error("❌ PostgreSQL Error:", err);
 });
