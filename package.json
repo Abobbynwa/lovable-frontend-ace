@@ -8,7 +8,10 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node server.js",
+    "migrate": "node scripts/migrate.js",
+    "create-admin": "node scripts/createAdmin.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
