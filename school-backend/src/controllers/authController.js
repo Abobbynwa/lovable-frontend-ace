@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { db } from "../config/db.js";
+import { pool } from "../config/db.js";
 
 // ============ REGISTER USER (ADMIN ONLY) ============
 export const register = async (req, res) => {

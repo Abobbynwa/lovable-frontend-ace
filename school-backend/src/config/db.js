@@ -6,6 +6,7 @@ export const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
+// Connect once
 pool.connect()
   .then(() => console.log("✅ Connected to PostgreSQL"))
   .catch(err => console.error("❌ DB Connection Error:", err));
