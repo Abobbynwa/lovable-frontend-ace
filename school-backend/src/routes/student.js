@@ -1,7 +1,7 @@
 import express from "express";
 import { allowRoles } from "../middleware/roleAuth.js";
+import { protect } from "../middleware/auth.js";
 
-import   { protect } from "../middleware/auth.js";
 import {
   getStudentDashboard,
   getAttendance,
@@ -12,11 +12,14 @@ import {
 
 const router = express.Router();
 
-router.get("/dashboard", auth, getStudentDashboard);
-router.get("/attendance/:id", auth, getAttendance);
-router.get("/results/:id", auth, getResults);
-router.get("/assignments/:className", auth, getAssignments);
-router.get("/timetable/:className", auth, getTimetable);
-router.use(auth, allowRoles("student"));
+// Apply authentication + role check for all student routes
+router.use(protect, allowRoles("student"));
+
+// Student Routes
+router.get("/dashboard", getStudentDashboard);
+router.get("/attendance/:id", getAttendance);
+router.get("/results/:id", getResults);
+router.get("/assignments/:className", getAssignments);
+router.get("/timetable/:className", getTimetable);
 
 export default router;
