@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-
+import router from "./app.js";
 import authRoutes from "./routes/auth.js";
 import adminRoutes from "./routes/admin.js";
 import staffRoutes from "./routes/staff.js";
@@ -25,3 +25,5 @@ app.get("/", (req, res) => res.send("School Backend Running"));
 app.listen(process.env.PORT, () =>
   console.log(`Backend running on port ${process.env.PORT}`)
 );
+export default router;
+
