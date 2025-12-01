@@ -1,7 +1,7 @@
 import express from "express";
 import { allowRoles } from "../middleware/roleAuth.js";
+import { protect } from "../middleware/auth.js";
 
-import   { protect }  from "../middleware/auth.js";
 import {
   getStaffDashboard,
   markAttendance,
@@ -11,10 +11,13 @@ import {
 
 const router = express.Router();
 
-router.get("/dashboard", auth, getStaffDashboard);
-router.post("/attendance", auth, markAttendance);
-router.post("/results", auth, addResult);
-router.post("/assignments", auth, createAssignment);
-router.use(auth, allowRoles("staff"));
+// Apply authentication + role check for all staff routes
+router.use(protect, allowRoles("staff"));
+
+// Staff Routes
+router.get("/dashboard", getStaffDashboard);
+router.post("/attendance", markAttendance);
+router.post("/results", addResult);
+router.post("/assignments", createAssignment);
 
 export default router;
