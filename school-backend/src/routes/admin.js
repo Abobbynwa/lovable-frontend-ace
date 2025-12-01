@@ -1,5 +1,5 @@
 import express from "express";
-import auth  from "../middleware/auth.js";
+import { protect } from "../middleware/auth.js";
 import {
   createStudent,
   createStaff,
@@ -10,10 +10,10 @@ import {
 
 const router = express.Router();
 
-router.get("/dashboard", auth, adminDashboard);
-router.post("/create-student", auth, createStudent);
-router.post("/create-staff", auth, createStaff);
-router.get("/students", auth, getAllStudents);
-router.get("/staff", auth, getAllStaff);
+router.get("/dashboard", protect(), adminDashboard);
+router.post("/create-student", protect(["admin"]), createStudent);
+router.post("/create-staff", protect(["admin"]), createStaff);
+router.get("/students", protect(), getAllStudents);
+router.get("/staff", protect(), getAllStaff);
 
 export default router;
