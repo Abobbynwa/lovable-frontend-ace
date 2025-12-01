@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import router from "./src/app.js";
-import  { pool }  from "./src/config/db.js";   // ensure DB connects
+import  {pool}   from "./src/config/db.js";   // ensure DB connects
 
 dotenv.config();
 
