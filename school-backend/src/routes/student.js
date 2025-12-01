@@ -1,7 +1,7 @@
 import express from "express";
 import { allowRoles } from "../middleware/roleAuth.js";
 
-import  auth  from "../middleware/auth.js";
+import   { protect } from "../middleware/auth.js";
 import {
   getStudentDashboard,
   getAttendance,
