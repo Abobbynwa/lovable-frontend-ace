@@ -1,29 +1,20 @@
 import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import router from "./app.js";
 import authRoutes from "./routes/auth.js";
 import adminRoutes from "./routes/admin.js";
 import staffRoutes from "./routes/staff.js";
 import studentRoutes from "./routes/student.js";
 
-dotenv.config();
-const app = express();
+const router = express.Router();
 
-app.use(cors());
-app.use(express.json());
+// Route mapping
+router.use("/auth", authRoutes);
+router.use("/admin", adminRoutes);
+router.use("/staff", staffRoutes);
+router.use("/student", studentRoutes);
 
-app.use("/auth", authRoutes);
-app.use("/admin", adminRoutes);
-app.use("/staff", staffRoutes);
-app.use("/student", studentRoutes);
-app.use("/api/staff", staffRoutes);
-app.use("/api/student", studentRoutes);
+// Health check
+router.get("/", (req, res) => {
+  res.send("School Backend API Running");
+});
 
-app.get("/", (req, res) => res.send("School Backend Running"));
-
-app.listen(process.env.PORT, () =>
-  console.log(`Backend running on port ${process.env.PORT}`)
-);
 export default router;
-
