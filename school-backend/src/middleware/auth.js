@@ -20,5 +20,3 @@ export const protect = (roles = []) => {
     }
   };
 };
-
-export default { protect };
